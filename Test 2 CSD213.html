@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking place for your dinner!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h1 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input[type="text"], input[type="radio"], input[type="checkbox"], button {
+            margin-bottom: 15px;
+        }
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        input[type="text"].error {
+            border-color: red;
+        }
+        input[type="text"].valid {
+            border-color: green;
+        }
+        input[type="radio"], input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #ccc;
+        }
+        span {
+            font-size: 0.9em;
+            color: red;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 1em;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <form id="reservationForm">
+        <h1>Booking place for your dinner!</h1>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" onblur="validateName()" oninput="validateName()">
+        <span id="nameError"></span><br>
+
+        <label for="phone">Phone number:</label>
+        <input type="text" id="phone" name="phone" onblur="validatePhone()" oninput="validatePhone()">
+        <span id="phoneError"></span><br>
+
+        <label>Select a time:</label><br>
+        <input type="radio" id="time1" name="time" value="05:00" checked> 05:00<br>
+        <input type="radio" id="time2" name="time" value="06:00"> 06:00<br>
+        <input type="radio" id="time3" name="time" value="07:00"> 07:00<br>
+        <input type="radio" id="time4" name="time" value="08:00"> 08:00<br><br>
+
+        <label>What would you like to have with us?</label><br>
+        <input type="checkbox" name="food" value="Starters"> Starters<br>
+        <input type="checkbox" name="food" value="Main Course"> Main Course<br>
+        <input type="checkbox" name="food" value="Desserts"> Desserts<br>
+        <input type="checkbox" name="food" value="Drinks"> Drinks<br><br>
+
+        <button type="button" id="submitBtn" disabled onclick="submitForm()">Submit</button>
+        <span id="message"></span>
+    </form>
+
+    <script>
+        function validateName() {
+            const nameField = document.getElementById('name');
+            const nameError = document.getElementById('nameError');
+            const name = nameField.value.trim();
+            if (name === '') {
+                nameError.textContent = 'Error: Name is empty.';
+                nameField.classList.add('error');
+                nameField.classList.remove('valid');
+            } else if (!name.includes(' ')) {
+                nameError.textContent = 'Error: First and last names are required.';
+                nameField.classList.add('error');
+                nameField.classList.remove('valid');
+            } else {
+                nameError.textContent = '';
+                nameField.classList.add('valid');
+                nameField.classList.remove('error');
+            }
+            enableSubmit();
+        }
+
+        function validatePhone() {
+            const phoneField = document.getElementById('phone');
+            const phoneError = document.getElementById('phoneError');
+            const phone = phoneField.value.trim();
+            const phonePattern = /^[0-9][0-9a-zA-Z]{5}$/;
+            if (phone === '') {
+                phoneError.textContent = 'Error: Phone number is empty.';
+                phoneField.classList.add('error');
+                phoneField.classList.remove('valid');
+            } else if (!phonePattern.test(phone)) {
+                phoneError.textContent = 'Error: Phone numbers must have exactly 6 characters and start with a number.';
+                phoneField.classList.add('error');
+                phoneField.classList.remove('valid');
+            } else {
+                phoneError.textContent = '';
+                phoneField.classList.add('valid');
+                phoneField.classList.remove('error');
+            }
+            enableSubmit();
+        }
+
+        function enableSubmit() {
+            const nameField = document.getElementById('name');
+            const phoneField = document.getElementById('phone');
+            const submitBtn = document.getElementById('submitBtn');
+            if (nameField.classList.contains('valid') && phoneField.classList.contains('valid')) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        function submitForm() {
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const time = document.querySelector('input[name="time"]:checked').value;
+            const foodItems = Array.from(document.querySelectorAll('input[name="food"]:checked')).map(item => item.value).join(', ');
+
+            const message = `Reservation for: ${name} Phone: (${phone}) at ${time}. Items: ${foodItems}`;
+            document.getElementById('message').textContent = message;
+        }
+
+        document.getElementById('name').addEventListener('input', validateName);
+        document.getElementById('phone').addEventListener('input', validatePhone);
+    </script>
+</body>
+</html>
